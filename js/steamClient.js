@@ -1,9 +1,3 @@
-/**
- * This javascript file sends api requests to the vercel proxy to retrieve steam info
- * I'll probably split this up into smaller junk later on
- * Also check out these wicked fancy multi line comments, pretty sweet right?
- */
-
 // Vercel URL to interface with the steam api
 const apiUrl = "https://steam-api-proxy.vercel.app/api/steam";
 
