@@ -1,60 +1,77 @@
-// Vercel URL to interface with the steam api
+// URL of Vercel backend that interfaces with Steam
 const apiUrl = "https://steam-api-proxy.vercel.app/api/steam";
 
-// Fetch data from the backend
-fetch(apiUrl)
-  .then(res => res.json())
-  .then(data => {
-    console.log("Steam data:", data);
+// Function to fetch games and populate the table
+function populateSteamTable() {
+  const tableBody = document.getElementById("games-table-body");
+  const outputDiv = document.getElementById("steam-data");
 
-    // Show number of games owned 
-    const outputDiv = document.getElementById("steam-data");
-    outputDiv.innerText = `You own ${data.response.game_count} games.`;
+  // Clear existing rows
+  tableBody.innerHTML = "";
+  outputDiv.innerText = "Loading games...";
 
-    const tableBody = document.getElementById("games-table-body");
+  fetch(apiUrl)
+    .then(res => res.json())
+    .then(data => {
+      console.log("Steam data:", data);
 
-    // Loop through each game and create table rows
-    data.response.games.forEach(game => {
-      const row = document.createElement("tr");
-
-      const titleCell = document.createElement("td");
-      titleCell.textContent = game.name;
-      row.appendChild(titleCell);
-
-      const achievementsCell = document.createElement("td");
-      achievementsCell.textContent = game.achievements 
-        ? game.achievements.total 
-        : "N/A";
-      row.appendChild(achievementsCell);
-
-      const completionCell = document.createElement("td");
-      if (game.achievements) {
-        const { unlocked, total } = game.achievements;
-        const completionRate = ((unlocked / total) * 100).toFixed(1);
-        completionCell.textContent = `${completionRate}%`;
-      } else {
-        completionCell.textContent = "N/A";
+      if (!data.response || !data.response.games || data.response.games.length === 0) {
+        outputDiv.innerText = "No games found.";
+        return;
       }
-      row.appendChild(completionCell);
 
-      const playtimeCell = document.createElement("td");
-      const hours = (game.playtime_forever / 60).toFixed(1);
-      playtimeCell.textContent = `${hours} hrs`;
-      row.appendChild(playtimeCell);
+      outputDiv.innerText = `You own ${data.response.game_count} games.`;
 
-      const lastPlayedCell = document.createElement("td");
-      if (game.rtime_last_played) {
-        const date = new Date(game.rtime_last_played * 1000);
-        lastPlayedCell.textContent = date.toLocaleDateString();
-      } else {
-        lastPlayedCell.textContent = "Never";
-      }
-      row.appendChild(lastPlayedCell);
+      data.response.games.forEach(game => {
+        const row = document.createElement("tr");
 
-      // Add row to table
-      tableBody.appendChild(row);
+        // Title
+        const titleCell = document.createElement("td");
+        titleCell.textContent = game.name;
+        row.appendChild(titleCell);
+
+        // Achievements
+        const achievementsCell = document.createElement("td");
+        achievementsCell.textContent = game.achievements
+          ? game.achievements.total
+          : "N/A";
+        row.appendChild(achievementsCell);
+
+        // Completion %
+        const completionCell = document.createElement("td");
+        if (game.achievements) {
+          const { unlocked, total } = game.achievements;
+          const completionRate = ((unlocked / total) * 100).toFixed(1);
+          completionCell.textContent = `${completionRate}%`;
+        } else {
+          completionCell.textContent = "N/A";
+        }
+        row.appendChild(completionCell);
+
+        // Playtime
+        const playtimeCell = document.createElement("td");
+        const hours = (game.playtime_forever / 60).toFixed(1);
+        playtimeCell.textContent = `${hours} hrs`;
+        row.appendChild(playtimeCell);
+
+        // Last Played
+        const lastPlayedCell = document.createElement("td");
+        if (game.rtime_last_played) {
+          const date = new Date(game.rtime_last_played * 1000);
+          lastPlayedCell.textContent = date.toLocaleDateString();
+        } else {
+          lastPlayedCell.textContent = "Never";
+        }
+        row.appendChild(lastPlayedCell);
+
+        // Append row to table
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error("Error fetching Steam data:", err);
+      outputDiv.innerText = "Error loading games.";
     });
-  })
-  .catch(err => {
-    console.error("Error fetching Steam data:", err);
-  });
+}
+
+document.addEventListener("DOMContentLoaded", populateSteamTable);
