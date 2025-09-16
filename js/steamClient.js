@@ -1,4 +1,4 @@
-// URL of your Vercel backend that interfaces with Steam
+// URL of Vercel backend that interfaces with Steam
 const apiUrl = "https://steam-api-proxy.vercel.app/api/steam";
 
 // Function to fetch games and populate the table
