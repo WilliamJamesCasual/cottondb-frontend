@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+---
+layout: null
+---
+
 <html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -6,7 +9,7 @@
   <link rel="icon" type="image/png" href="images/CottonDB_Logo.png">
 </head>
 <body>
-  <div id="header"></div>
+  {% include header.html %}
 
   <main class="flex-grow-1 container py-4">
     <h1>Welcome to my Steam Achievements!</h1>
@@ -35,21 +38,8 @@
   </div>
 </div>
 
-  <div id="footer"></div>
-
-  <script>
-    fetch("header.html")
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("header").innerHTML = data;
-      });
-
-    fetch("footer.html")
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("footer").innerHTML = data;
-      });
-  </script>
+  {% include footer.html %}
+  
   <script src="js/steamClient.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
 </body>
